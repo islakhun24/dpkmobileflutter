@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Email",
+          "Username",
           style: TextStyle(
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
@@ -163,11 +163,11 @@ class _LoginPageState extends State<LoginPage> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(top: 14),
                 prefixIcon: Icon(
-                  Icons.email,
+                  Icons.person,
                   // ignore: unnecessary_const
                   color: const Color(0xff4c5166),
                 ),
-                hintText: 'Email',
+                hintText: 'Username',
                 hintStyle: TextStyle(color: Colors.black38)),
           ),
         ),

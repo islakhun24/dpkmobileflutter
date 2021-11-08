@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
 
-      body: Container(
+      body: SafeArea(child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             dashboard(context),
           ],
         ),
-      ),
+      ),)
     );
   }
 
@@ -220,7 +220,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         ],
                       ),
                     ),
-                    SizedBox(height: 50),
                     Container(
                       child: _getDrawerItemWidget(_selectedDrawerIndex),
                     )
