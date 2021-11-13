@@ -1,10 +1,15 @@
 import 'package:dpkmobileflutter/constants/padding.dart';
 import 'package:dpkmobileflutter/model/project.dart';
+import 'package:dpkmobileflutter/model/sugest_agen.dart';
+import 'package:dpkmobileflutter/model/sugest_barang.dart';
+import 'package:dpkmobileflutter/model/sugest_smu.dart';
+import 'package:dpkmobileflutter/services/Api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qr_bar_scanner/flutter_qr_bar_scanner.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class AcceptanceSmuPage extends StatefulWidget {
   AcceptanceSmuPage({Key? key, this.data}) : super(key: key);
@@ -16,7 +21,15 @@ class AcceptanceSmuPage extends StatefulWidget {
 class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
   String? _qrInfo = 'Scan a QR/Bar code';
   bool _camState = true;
-
+  late Future<String?> futureSmuList;
+  late Future<SuggestSmu> futureSuggestSmuList;
+  late Api api;
+  late TextEditingController _smuController;
+  late TextEditingController _agenController;
+  late TextEditingController _companyController;
+  late TextEditingController _nohpController;
+  late TextEditingController _alamatController;
+  late TextEditingController _barangController;
   _qrCallback(String? code) {
     setState(() {
       _camState = false;
@@ -34,11 +47,19 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
   @override
   void initState(){
     super.initState();
+    _smuController = TextEditingController();
+    _companyController = TextEditingController();
+    _agenController = TextEditingController();
+    _nohpController = TextEditingController();
+    _alamatController = TextEditingController();
+    _barangController = TextEditingController();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
     _scanCode();
+    api = Api();
+    futureSmuList = api.getSmuAcceptance(widget.data!.id.toString());
   }
   @override
   dispose(){
@@ -437,14 +458,14 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
                     children: [
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _autoCompleteSmu(context)
                       ),
                       SizedBox(
                         width: 16,
                       ),
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _autoCompleteAgen(context)
                       ),
                     ],
                   ),
@@ -455,14 +476,14 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
                     children: [
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _textEditNohp(context)
                       ),
                       SizedBox(
                         width: 16,
                       ),
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _textEditAlamat(context)
                       ),
                     ],
                   ),
@@ -473,14 +494,14 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
                     children: [
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _textEditCompany(context)
                       ),
                       SizedBox(
                         width: 16,
                       ),
                       Expanded(
                           flex:1,
-                          child: _autoComplete(context)
+                          child: _autoCompleteBarang(context)
                       ),
                     ],
                   )
@@ -531,19 +552,119 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
     'bobcat',
     'chameleon',
   ];
-  _autoComplete(contex){
-      return Autocomplete<String>(
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          if (textEditingValue.text == '') {
-            return const Iterable<String>.empty();
-          }
-          return _kOptions.where((String option) {
-            return option.contains(textEditingValue.text.toLowerCase());
+  _autoCompleteSmu(contex){
+      return TypeAheadField(
+        textFieldConfiguration: TextFieldConfiguration(
+            controller: _smuController,
+            style: TextStyle(
+
+            ),
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'SMU'
+            )
+        ),
+        suggestionsCallback: (pattern) async {
+          return await api.getSuggestSmu(pattern);
+        },
+        itemBuilder: (context, suggestion) {
+          return  ListTile(
+            title: Text(suggestion.toString())
+          );
+        },
+        onSuggestionSelected: (suggestion) {
+          setState(() {
+            _smuController.text = suggestion.toString();
           });
         },
-        onSelected: (String selection) {
-          print('You just selected $selection');
-        },
       );
+  }
+  _autoCompleteAgen(contex){
+    return TypeAheadField(
+      textFieldConfiguration: TextFieldConfiguration(
+          controller: _agenController,
+          style: TextStyle(
+
+          ),
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Nama Agen'
+          )
+      ),
+      suggestionsCallback: (pattern) async {
+        return await api.getSuggestAgen(pattern);
+      },
+      itemBuilder: (context, SuggestAgen suggestion) {
+        return  ListTile(
+            title: Text(suggestion.customer.toString())
+        );
+      },
+      onSuggestionSelected: (SuggestAgen suggestion) {
+        setState(() {
+          _companyController.text = suggestion.company_name.toString();
+          _agenController.text = suggestion.customer.toString();
+          _nohpController.text = suggestion.nohp.toString();
+          _alamatController.text = suggestion.alamat.toString();
+        });
+      },
+    );
+  }
+  _textEditCompany(contex){
+    return TextField(
+      controller: _companyController,
+      keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Nama Perusahaan'
+        )
+    );
+  }
+  _textEditNohp(contex){
+    return TextField(
+        controller: _nohpController,
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'No Hp'
+        )
+    );
+  }
+  _textEditAlamat(contex){
+    return TextField(
+        controller: _alamatController,
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Alamat'
+        )
+    );
+  }
+  _autoCompleteBarang(contex){
+    return TypeAheadField(
+      textFieldConfiguration: TextFieldConfiguration(
+          controller: _barangController,
+          style: TextStyle(
+
+          ),
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+            hintText: 'Nama Barang'
+          )
+      ),
+      suggestionsCallback: (pattern) async {
+        return await api.getSuggestBarang(pattern);
+      },
+      itemBuilder: (context, SuggestBarang suggestion) {
+        return  ListTile(
+            title: Text(suggestion.nama_barang.toString()),
+            subtitle: Text(suggestion.kode_barang.toString()),
+        );
+      },
+      onSuggestionSelected: (SuggestBarang suggestion) {
+        setState(() {
+          _barangController.text = suggestion.nama_barang.toString();
+        });
+      },
+    );
   }
 }
