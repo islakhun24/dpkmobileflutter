@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:dpkmobileflutter/constants/padding.dart';
 import 'package:dpkmobileflutter/model/project.dart';
+import 'package:dpkmobileflutter/model/smu.dart';
 import 'package:dpkmobileflutter/model/sugest_agen.dart';
 import 'package:dpkmobileflutter/model/sugest_barang.dart';
 import 'package:dpkmobileflutter/model/sugest_smu.dart';
+import 'package:dpkmobileflutter/pages/homePage.dart';
 import 'package:dpkmobileflutter/services/Api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qr_bar_scanner/flutter_qr_bar_scanner.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class AcceptanceSmuPage extends StatefulWidget {
   AcceptanceSmuPage({Key? key, this.data}) : super(key: key);
@@ -21,7 +26,6 @@ class AcceptanceSmuPage extends StatefulWidget {
 class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
   String? _qrInfo = 'Scan a QR/Bar code';
   bool _camState = true;
-  late Future<String?> futureSmuList;
   late Future<SuggestSmu> futureSuggestSmuList;
   late Api api;
   late TextEditingController _smuController;
@@ -30,6 +34,10 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
   late TextEditingController _nohpController;
   late TextEditingController _alamatController;
   late TextEditingController _barangController;
+  late Future<List<Smu>> futureListSmu;
+  late List<Smu> smu;
+  late List<Smu> smu2;
+  bool jwt = false;
   _qrCallback(String? code) {
     setState(() {
       _camState = false;
@@ -47,6 +55,10 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
   @override
   void initState(){
     super.initState();
+    smu = [];
+    smu2 = [];
+    api = Api();
+    futureListSmu = api.getSmuAcceptance(widget.data!.id.toString());
     _smuController = TextEditingController();
     _companyController = TextEditingController();
     _agenController = TextEditingController();
@@ -58,8 +70,8 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
       DeviceOrientation.landscapeLeft,
     ]);
     _scanCode();
-    api = Api();
-    futureSmuList = api.getSmuAcceptance(widget.data!.id.toString());
+
+
   }
   @override
   dispose(){
@@ -110,129 +122,6 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
             padding: const EdgeInsets.all(16),
             child: _buildColumn(context),
           )
-             // child: Row(
-             //   crossAxisAlignment: CrossAxisAlignment.start,
-             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             //   children: [
-             //     Column(
-             //       crossAxisAlignment: CrossAxisAlignment.start,
-             //       children: [
-             //         Wrap(
-             //           alignment: WrapAlignment.start,
-             //         children: [
-             //           Align(
-             //             alignment: Alignment.center,
-             //             child: Text(
-             //               widget.data!.no,
-             //               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF32395D),),
-             //             ),
-             //           ),
-             //           Container(width: 8,),
-             //           Column(
-             //             crossAxisAlignment: CrossAxisAlignment.start,
-             //             mainAxisAlignment: MainAxisAlignment.start,
-             //             children: [
-             //               Text(
-             //                 'Pengemudi:',
-             //                 textAlign: TextAlign.start,
-             //                 // style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF32395D),),
-             //               ),
-             //               Container(
-             //                 height: 4,
-             //               ),
-             //               Text(
-             //                 widget.data!.nama_pengemudi + ' ('+ widget.data!.no_polisi_kendaraan+')',
-             //                 textAlign: TextAlign.start,
-             //                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF32395D),),
-             //               )
-             //             ],
-             //           )
-             //         ],
-             //       ),
-             //         Container(height: 20,),
-             //         Card(
-             //           elevation: 4,
-             //           color: Colors.white,
-             //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-             //           child: Container(
-             //             padding: const EdgeInsets.all(16),
-             //             height: 300,
-             //             width: 280,
-             //
-             //             margin: const EdgeInsets.only(bottom: 10),
-             //             child: Column(
-             //               children: [
-             //                 _camState
-             //                     ? QRBarScannerCamera(
-             //                   fit: BoxFit.cover,
-             //                   onError: (context, error) => Text(
-             //                     error.toString(),
-             //                     style: TextStyle(color: Colors.red),
-             //                   ),
-             //                   qrCodeCallback: (code) {
-             //                     _qrCallback(code);
-             //                   },
-             //                 ):Center(
-             //                      child: Text(_qrInfo!),
-             //                ),
-             //               ],
-             //             ),
-             //           ),
-             //         )
-             //       ],
-             //     ),
-             //     Container(
-             //       width: 16,
-             //     ),
-             //     Expanded(
-             //       child: Column(
-             //         mainAxisSize: MainAxisSize.max,
-             //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             //         children: [
-             //           Container(
-             //
-             //               height: 56,
-             //               child: Row(
-             //                 mainAxisSize: MainAxisSize.max,
-             //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             //                 children: [
-             //                   Align(
-             //                     alignment: Alignment.bottomLeft,
-             //                     child: Wrap(
-             //                       children: [
-             //                         Text('Daftar barang | Total'),
-             //                         Container(width: 4,),
-             //                         Text('0 Koli', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C5170),),),
-             //                       ],
-             //                     ),
-             //                   ),
-             //                  Align(
-             //                    alignment: Alignment.centerRight,
-             //                    child:  ElevatedButton(
-             //                      onPressed: () {
-             //                        Navigator.push(
-             //                            context, MaterialPageRoute(builder: (context) => AcceptanceSmuPage(data: widget.data,)));
-             //                      },
-             //                      child: Text('Selesai', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
-             //                      style: ElevatedButton.styleFrom(
-             //                        shape: RoundedRectangleBorder(
-             //                            borderRadius: BorderRadius.circular(8)
-             //                        ),
-             //                        padding: EdgeInsets.all(20),
-             //                        primary: Colors.green, // <-- Button color
-             //                        onPrimary: Colors.green.shade600, // <-- Splash color
-             //                      ),
-             //                    ),
-             //                  )
-             //                 ],
-             //               )
-             //           )
-             //         ],
-             //       ),
-             //     )
-             //   ],
-             // )),
-
 
         )
     ),
@@ -370,44 +259,138 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
               children: [
                 Container(
                     height: 56,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Wrap(
+                    child: FutureBuilder<List<Smu>>(
+                      builder: (context, snapshot){
+                        print(snapshot);
+                        if(snapshot.hasData){
+                          smu = snapshot.data!;
+                          return Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Daftar barang | Total'),
-                              Container(width: 4,),
-                              Text('0 Koli', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C5170),),),
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Wrap(
+                                  children: [
+                                    Text('Daftar barang | Total'),
+                                    Container(width: 4,),
+                                    Text('${smu.length} Koli', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C5170),),),
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child:  SizedBox(
+                                  height: 46,
+                                  width: 120,
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      var selesai = await api.selesaiSmuAcceptence(widget.data!.id);
+                                      print(selesai);
+                                      if (selesai == true) {
+                                        Navigator.push(
+                                            context, MaterialPageRoute(builder: (context) => HomePage()));
+                                      }
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    color: Colors.green.shade600,
+                                    child: Center(
+                                      child: Text(
+                                        "Selesai",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
-                          ),
-                        ),
-                       Align(
-                         alignment: Alignment.centerRight,
-                         child:  SizedBox(
-                           height: 46,
-                           width: 120,
-                           child: RaisedButton(
-                             onPressed: () {
+                          );
+                        }
+                        else if(snapshot.hasError){
+                          return Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Wrap(
+                                  children: [
+                                    Text('Daftar barang | Total'),
+                                    Container(width: 4,),
+                                    Text('0 Koli', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C5170),),),
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child:  SizedBox(
+                                  height: 46,
+                                  width: 120,
+                                  child: RaisedButton(
+                                    onPressed: () {
 
-                             },
-                             shape: RoundedRectangleBorder(
-                               borderRadius: BorderRadius.circular(10),
-                             ),
-                             color: Colors.green.shade600,
-                             child: Center(
-                               child: Text(
-                                 "Selesai",
-                                 style: TextStyle(color: Colors.white),
-                               ),
-                             ),
-                           ),
-                         ),
-                       )
-                      ],
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    color: Colors.green.shade600,
+                                    child: Center(
+                                      child: Text(
+                                        "Selesai",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        }else{
+                          return Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Wrap(
+                                  children: [
+                                    Text('Daftar barang | Total'),
+                                    Container(width: 4,),
+                                    Text('0 Koli', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF3C5170),),),
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child:  SizedBox(
+                                  height: 46,
+                                  width: 120,
+                                  child: RaisedButton(
+                                    onPressed: () {
+
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    color: Colors.green.shade600,
+                                    child: Center(
+                                      child: Text(
+                                        "Selesai",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        }
+                      },
+                      future: futureListSmu,
                     )
+
                 ),
                 _buildListView(context)
               ],
@@ -424,7 +407,32 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
-
+          child: FutureBuilder<List<Smu>>(
+            future: futureListSmu,
+            builder: (context, snapshot){
+                if(snapshot.hasData){
+                  smu2 = snapshot.data!;
+                  if(smu2.length != 0){
+                    return SingleChildScrollView(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: ListView.builder(
+                          itemBuilder: (context, index){
+                            return _itemContent(context, smu[index], index);
+                          },
+                          itemCount: smu2.length,
+                        ),
+                      ),
+                    );
+                  }else{
+                    return Container();
+                  }
+                }else{
+                  return Container();
+                }
+            },
+          ),
         ),
       );
   }
@@ -518,8 +526,31 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
                         },
                         child: Text('Batal',style: TextStyle(fontSize: 18),)),
                     FlatButton(
-                        onPressed: (){
-                          Navigator.of(context).pop();
+                        onPressed: () async {
+                          await new Future.delayed(new Duration(seconds: 1));
+                          late Object fomdata = {
+                            "smu": _smuController.text.toString(),
+                            "nama_agen": _agenController.text.toString(),
+                            "no_hp": _nohpController.text.toString(),
+                            "alamat": _alamatController.text.toString(),
+                            "nama_barang":  _barangController.text.toString(),
+                            "company_name":_companyController.text.toString(),
+                            "project_id": this.widget.data!.id.toString(),
+                          };
+
+                           jwt = await api.createSmu(fomdata);
+                          if(jwt == true){
+                            Navigator.of(context).pop();
+                          }else{
+                            LoadingIndicator(
+                                indicatorType: Indicator.ballTrianglePathColoredFilled, /// Required, The loading type of the widget
+                                colors: const [Colors.white],       /// Optional, The color collections
+                                strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+                                backgroundColor: Colors.black,      /// Optional, Background of the widget
+                                pathBackgroundColor: Colors.black   /// Optional, the stroke backgroundColor
+                            );
+                          }
+
                         },
                         child: Text('Tambah',style: TextStyle(fontSize: 18),)),
                   ],
@@ -546,7 +577,102 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
       ],
     );
   }
-
+  _itemContent(context, Smu smu, int index){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              padding: const EdgeInsets.only(top:2, bottom: 2, left: 16, right: 16),
+              child: Text('No.', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+            ),
+            Expanded(
+                flex: 1,
+                child: Container(
+                  padding: const EdgeInsets.only(top:2, bottom: 2, left: 16, right: 16),
+                  child: Text('STATUS', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.only(top:2, bottom: 2, left: 16, right: 16),
+                child: Text('SMU', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.only(top:2, bottom: 2, left: 16, right: 16),
+                child: Text('KOLI', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.only(top:2, bottom: 2, left: 16, right: 16),
+                child: Text('BERAT BARANG', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+              ),
+            )
+          ],
+        ),
+        Container(
+          height: 8,
+        ),
+        Divider(
+            color: Colors.grey
+        ),
+        Container(
+          height: 8,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              padding: const EdgeInsets.only(right: 16, left: 16, top: 2, bottom: 2),
+              child: Text('${(index+1).toString()}.'),
+            ),
+            Expanded(
+                flex:1,
+                child: Wrap(
+                  children: [
+                    Container(
+                        width: 100,
+                        padding: const EdgeInsets.only(top: 2, bottom: 2, right: 16, left: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.blue,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text('${smu.status.toString()}', textAlign: TextAlign.center,)
+                    )
+                  ],
+                )
+            ),
+            Expanded(
+                flex:1,
+                child: Text('${smu.smu.toString()}')
+            ),
+            Expanded(
+                flex:1,
+                child: Text('${smu.koli.toString()}')
+            ),
+            Expanded(
+                flex:1,
+                child: Text('${smu.berat_total.toString()} Kg')
+            ),
+          ],
+        )
+      ],
+    )
+     ;
+  }
   static const List<String> _kOptions = <String>[
     'aardvark',
     'bobcat',
@@ -572,9 +698,17 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
             title: Text(suggestion.toString())
           );
         },
-        onSuggestionSelected: (suggestion) {
+        onSuggestionSelected: (suggestion) async {
+         Smu? smu = await api.detaiSmuSuggest(suggestion.toString());
+         SuggestAgen? agen = await api.detaiAgen(smu!.nama_agen.toString());
+
           setState(() {
             _smuController.text = suggestion.toString();
+            _barangController.text = smu.nama_barang.toString();
+            _alamatController.text = agen!.alamat.toString();
+            _agenController.text = smu.nama_agen.toString();
+            _companyController.text = agen.company_name.toString();
+            _nohpController.text = agen.nohp.toString();
           });
         },
       );

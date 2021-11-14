@@ -32,13 +32,13 @@ class Api {
     // else return null;
 
   }
-  Future<String?> getSmuAcceptance(String id) async {
+  Future<List<Smu>> getSmuAcceptance(String id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
     var res = await http.get(Uri.parse(Url.ACCEPTANCE_SMU_LIST+'/'+id),headers: {'x-access-token': jwt!});
     // print(res.body);
-    if (res.statusCode == 200) return res.body;
-    return null;
+    if (res.statusCode == 200) return smuFromJson(res.body);
+    return [];
   }
 
   Future<List<SuggestSmu>> getSuggestSmu(no_smu) async {
@@ -47,7 +47,7 @@ class Api {
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_SUGGEST_SMU),
         body: {"no_smu": no_smu}
         ,headers: {'x-access-token': jwt!});
-    print(res.body);
+    // print(res.body);
     if (res.statusCode == 200) return suggestFromJson(res.body);
     return [];
   }
@@ -58,7 +58,7 @@ class Api {
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_SUGGEST_CUSTOMER),
         body: {"customer": customer}
         ,headers: {'x-access-token': jwt!});
-    print(res.body);
+    // print(res.body);
     if (res.statusCode == 200) return suggesAgenFromJson(res.body);
     return [];
   }
@@ -68,7 +68,7 @@ class Api {
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_SUGGEST_BARANG),
         body: {"nama_barang": nama_barang}
         ,headers: {'x-access-token': jwt!});
-    print(res.body);
+    // print(res.body);
     if (res.statusCode == 200) return suggestFromJsonBarang(res.body);
     return [];
   }
@@ -81,6 +81,49 @@ class Api {
     print(res.body);
     if (res.statusCode == 200) return Smu.fromJson(json.decode(res.body));
     return null;
+  }
+  Future<SuggestAgen?> detaiAgen(nama_agen) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    var res = await http.post(Uri.parse(Url.ACCEPTANCE_DETAIL_AGEN),
+        body: {"nama_agen": nama_agen}
+        ,headers: {'x-access-token': jwt!});
+    print(res.body);
+    if (res.statusCode == 200) return SuggestAgen.fromJson(json.decode(res.body));
+    return null;
+  }
+  Future<bool> createSmu(formdata) async {
+    // print(formdata);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    var res = await http.post(Uri.parse(Url.ACCEPTANCE_SMU_CREATE),
+        body: formdata
+        ,headers: {'x-access-token': jwt!});
+    print(res.body);
+    if (res.statusCode == 200) return true;
+    return false;
+  }
+
+  Future<bool> selesaiSmuAcceptence(id) async {
+    // print(formdata);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    var res = await http.get(Uri.parse(Url.ACCEPTANCE_SMU_SELESAI+"/${id}")
+        ,headers: {'x-access-token': jwt!});
+    print(res.body);
+    if (res.statusCode == 200) return true;
+    return false;
+  }
+  Future<Response_acceptance?> checker_project() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    final res = await http.get(
+        Uri.parse(Url.CHECKER_SMU_PROJECT),
+        headers: {'x-access-token': jwt!});
+    print(res.body);
+    if (res.statusCode == 200) return Response_acceptance.fromJson(jsonDecode(res.body));
+    else return null;
+
   }
 }
 String prettyJson(dynamic json) {

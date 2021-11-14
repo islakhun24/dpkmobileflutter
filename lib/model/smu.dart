@@ -14,7 +14,7 @@ class Smu {
   int? berat_awal;
   int? berat_recharge_cargo;
   int? berat_total;
-  String? checker;
+  int? checker;
   String? project_id;
   bool? check;
   String? warehouse;
