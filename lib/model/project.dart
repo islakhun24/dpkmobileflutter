@@ -1,14 +1,14 @@
 class Project{
-  final int id;
-  final String tanggal;
-  final String no;
-  final String no_polisi_kendaraan;
-  final String nama_pengemudi;
-  final String asal_tps;
-  final String kota_asal;
-  final String kota_tujuan;
-  final int selesai;
-  final int team;
+  final int? id;
+  final String? tanggal;
+  final String? no;
+  final String? no_polisi_kendaraan;
+  final String? nama_pengemudi;
+  final String? asal_tps;
+  final String? kota_asal;
+  final String? kota_tujuan;
+  final int? selesai;
+  final int? team;
   Project({
     required this.id,
     required this.tanggal,

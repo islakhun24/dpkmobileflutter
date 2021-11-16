@@ -160,7 +160,7 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
             Align(
               alignment: Alignment.center,
               child: Text(
-                this.widget.data!.no,
+                this.widget.data!.no.toString(),
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF32395D),),
               ),
             ),
@@ -178,7 +178,7 @@ class _AcceptanceSmuPageState extends State<AcceptanceSmuPage> {
                   height: 4,
                 ),
                 Text(
-                  this.widget.data!.nama_pengemudi + ' ('+ this.widget.data!.no_polisi_kendaraan+')',
+                  this.widget.data!.nama_pengemudi.toString() + ' ('+ this.widget.data!.no_polisi_kendaraan.toString()+')',
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF32395D),),
                 )

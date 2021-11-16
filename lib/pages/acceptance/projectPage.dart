@@ -36,7 +36,7 @@ class _ProjectAcceptancePageState extends State<ProjectAcceptancePage> {
                   Container(
                     height: 2,
                   ),
-                  Text(widget.data!.no, style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
+                  Text(widget.data!.no.toString(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
                   Container(
                     height: 16,
                   ),
@@ -44,7 +44,7 @@ class _ProjectAcceptancePageState extends State<ProjectAcceptancePage> {
                   Container(
                     height: 2,
                   ),
-                  Text(widget.data!.nama_pengemudi + ' ('+widget.data!.no_polisi_kendaraan+')', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
+                  Text(widget.data!.nama_pengemudi.toString() + ' ('+widget.data!.no_polisi_kendaraan.toString()+')', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
 
                 ],
               ),
