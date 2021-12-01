@@ -26,7 +26,7 @@ class Api {
   Future<Response_acceptance?> acceptance_get() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
-    final res = await http.get(Uri.parse(Url.ACCEPTANCE_PROJECT_GET),
+    final res = await http.get(Uri.parse(Url.CHECKER_SMU_PROJECT),
         headers: {'x-access-token': jwt!});
     if (res.statusCode == 200)
       return Response_acceptance.fromJson(jsonDecode(res.body));
@@ -78,7 +78,6 @@ class Api {
     String? jwt = preferences.getString('jwt');
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_DETAIL_SMU_SUGGEST),
         body: {"smu": smu}, headers: {'x-access-token': jwt!});
-    print(res.body);
     if (res.statusCode == 200) return Smu.fromJson(json.decode(res.body));
     return null;
   }
@@ -88,7 +87,6 @@ class Api {
     String? jwt = preferences.getString('jwt');
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_DETAIL_AGEN),
         body: {"nama_agen": namaAgen}, headers: {'x-access-token': jwt!});
-    print(res.body);
     if (res.statusCode == 200)
       return SuggestAgen.fromJson(json.decode(res.body));
     return null;
@@ -100,7 +98,6 @@ class Api {
     String? jwt = preferences.getString('jwt');
     var res = await http.post(Uri.parse(Url.ACCEPTANCE_SMU_CREATE),
         body: formdata, headers: {'x-access-token': jwt!});
-    print(res.body);
     if (res.statusCode == 200) return true;
     return false;
   }
@@ -115,15 +112,42 @@ class Api {
     if (res.statusCode == 200) return true;
     return false;
   }
-
+  Future<List<Smu?>> updateSmuChecker(id) async {
+    // print(formdata);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    var res = await http.get(Uri.parse(Url.CHECKER_SMU_UPDATE + "/${id}"),
+        headers: {'x-access-token': jwt!});
+    print(res.body);
+    if (res.statusCode == 200) return smuFromJson(res.body);
+    return [];
+  }
   Future<Response_acceptance?> checker_project() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
     final res = await http.get(Uri.parse(Url.CHECKER_SMU_PROJECT),
         headers: {'x-access-token': jwt!});
-    print(res.body);
+
     if (res.statusCode == 200) return Response_acceptance.fromJson(jsonDecode(res.body));
     return null;
+  }
+  Future<List<Smu>> checkerSmu(id) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    final response = await http.get(
+        Uri.parse("${Url.CHECKER_SMU_LIST}/${id.toString()}"),
+        headers: {'x-access-token': jwt!});
+    // print(response.body);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      // final parsed = json.
+      return smuFromJson(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return [];
+    }
   }
 }
 

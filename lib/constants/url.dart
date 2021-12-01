@@ -15,4 +15,6 @@ class Url {
   static const ACCEPTANCE_DETAIL_AGEN = "$BASE_URL/mobile/acceptance/detail/agen";
   static const ACCEPTANCE_SMU_SELESAI ="$BASE_URL/main2/projek/acceptance/selesai";
   static const CHECKER_SMU_PROJECT = "$BASE_URL/main2/checker/get";
+  static const CHECKER_SMU_LIST = "$BASE_URL/mobile/checker/smu/list";
+  static const CHECKER_SMU_UPDATE = "$BASE_URL/mobile/checker/update/smu";
 }

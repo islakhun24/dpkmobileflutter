@@ -7,6 +7,7 @@ import 'package:dpkmobileflutter/pages/emptyacceptancePage.dart';
 import 'package:dpkmobileflutter/services/Api.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:responsive_table/DatatableHeader.dart';
 
 class CheckerFrag extends StatefulWidget {
   const CheckerFrag({Key? key}) : super(key: key);
@@ -25,80 +26,7 @@ class _CheckerFragState extends State<CheckerFrag> {
     api = Api();
     service = api.acceptance_get();
   }
-  List<DatatableHeader> _headers = [
-    DatatableHeader(
-        text: "ID",
-        value: "id",
-        show: false,
-        sortable: true,
-        textAlign: TextAlign.right),
-    DatatableHeader(
-        text: "Name",
-        value: "name",
-        show: true,
-        flex: 2,
-        sortable: true,
-        editable:true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "SKU",
-        value: "sku",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.center),
-    DatatableHeader(
-        text: "Category",
-        value: "category",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "Price",
-        value: "price",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "Margin",
-        value: "margin",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "In Stock",
-        value: "in_stock",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "Alert",
-        value: "alert",
-        show: true,
-        sortable: true,
-        textAlign: TextAlign.left),
-    DatatableHeader(
-        text: "Received",
-        value: "received",
-        show: true,
-        sortable: false,
-        sourceBuilder: (value, row) {
-          List list = List.from(value);
-          return Container(
-            child: Column(
-              children: [
-                Container(
-                  width: 85,
-                  child: LinearProgressIndicator(
-                    value: list.first / list.last,
-                  ),
-                ),
-                Text("${list.first} of ${list.last}")
-              ],
-            ),
-          );
-        },
-        textAlign: TextAlign.center),
-  ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -148,7 +76,7 @@ class _CheckerFragState extends State<CheckerFrag> {
                     Container(
                       height: 2,
                     ),
-                    Text(data!.no.toString(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
+                    Text(data.no.toString(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
                     Container(
                       height: 16,
                     ),
@@ -156,7 +84,7 @@ class _CheckerFragState extends State<CheckerFrag> {
                     Container(
                       height: 2,
                     ),
-                    Text(data!.nama_pengemudi.toString() + ' ('+data!.no_polisi_kendaraan.toString()+')', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
+                    Text(data.nama_pengemudi.toString() + ' ('+data.no_polisi_kendaraan.toString()+')', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20),),
 
                   ],
                 ),
