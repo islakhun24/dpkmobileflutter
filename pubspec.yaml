@@ -45,6 +45,7 @@ dependencies:
   autocomplete_textfield: ^1.7.3
   flutter_typeahead: ^3.2.1
   responsive_table: ^0.1.1+8
+  datetime_picker_formfield: ^2.0.0
 
 dev_dependencies:
   flutter_test:

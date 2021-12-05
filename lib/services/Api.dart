@@ -2,6 +2,7 @@
 // import 'package:pretty_json/pretty_json.dart';
 import 'dart:convert';
 
+import 'package:dpkmobileflutter/model/document_response.dart';
 import 'package:dpkmobileflutter/model/smu.dart';
 import 'package:dpkmobileflutter/model/sugest_agen.dart';
 import 'package:dpkmobileflutter/model/sugest_barang.dart';
@@ -148,6 +149,35 @@ class Api {
       // then throw an exception.
       return [];
     }
+  }
+
+  Future<DocumentResponse?> documentDetail(id) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    final response = await http.get(
+        Uri.parse("${Url.DOCUMENT_CHECKER_DETAIL}/${id.toString()}"),
+        headers: {'x-access-token': jwt!});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      // final parsed = json.
+      return DocumentResponse.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+  Future<List<Smu>> documentSmuDetail(id) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    final response = await http.get(
+        Uri.parse("${Url.DOCUMENT_SMU_DETAIL}/${id.toString()}"),
+        headers: {'x-access-token': jwt!});
+    print( response.body);
+    if (response.statusCode == 200) return smuFromJson(response.body);
+    return [];
   }
 }
 

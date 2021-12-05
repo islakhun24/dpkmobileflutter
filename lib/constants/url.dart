@@ -17,4 +17,6 @@ class Url {
   static const CHECKER_SMU_PROJECT = "$BASE_URL/main2/checker/get";
   static const CHECKER_SMU_LIST = "$BASE_URL/mobile/checker/smu/list";
   static const CHECKER_SMU_UPDATE = "$BASE_URL/mobile/checker/update/smu";
+  static const DOCUMENT_CHECKER_DETAIL = "$BASE_URL/main2/checker/document";
+  static const DOCUMENT_SMU_DETAIL = "$BASE_URL/main2/document/smu4";
 }
