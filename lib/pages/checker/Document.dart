@@ -29,6 +29,12 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   late TextEditingController _statuskeaamananditerbitkanolehController;
   late TextEditingController _pengecualianPemeriksaanController;
   late TextEditingController _metodePemeriksaanyanglainController;
+  List<Map<String, dynamic>> warehouseList=[] ;
+  List<Map<String, dynamic>> tanggals=[] ;
+  List<String?> isiKirimanList = [];
+  List<String?> namaAgenList = [];
+
+  List<Smu?> formSmuList = [];
   String? _transit = 'TIDAK ADA';
   bool isSpx = false;
   bool isSco = false;
@@ -38,7 +44,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   bool isEdd = false;
   bool isOther = false;
   bool isTransit = false;
-
+  bool isLoadingCreate = false ;
   late  Api api;
   late Future futurePost ;
   late List<Smu?> smu = [];
@@ -92,7 +98,6 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
       setState(() {
         this._documentResponse = smuList;
         this.isLoading = false;
-
       });
       _kotaAsalController.text = this._documentResponse!.detail!.kotaAsal.toString();
       _kotaTujuanController.text = this._documentResponse!.detail!.kotaTujuan.toString();
@@ -137,7 +142,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                 Expanded(
                     flex: 1,
                     // child: _widgetWarehouse(context, _controllerWarehouses[i])
-                  child: _documentResponse!.warehouses![i].warehouse == 'DBM' || _documentResponse!.warehouses![i].warehouse == 'PERSERO BATAM'  ? _widgetWarehouse(context, _controllerWarehouses[i]) : _selectWarehouse(context),
+                  child: _documentResponse!.warehouses![i].warehouse == 'DBM' || _documentResponse!.warehouses![i].warehouse == 'PERSERO BATAM'  ? _widgetWarehouse(context, _controllerWarehouses[i]) : _selectWarehouse(context,_documentResponse!.warehouses![i] ),
                 ),
                 SizedBox(width: 16,),
                 Expanded(
@@ -226,7 +231,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                                        shape: RoundedRectangleBorder(
                                            borderRadius: BorderRadius.all(Radius.circular(8))),
                                        onPressed: () async {
-                                         _showMyDialog(context);
+                                         handleClick();
                                          //
                                          // api.adminSelesai(newData, widget.data!.id);
                                        },
@@ -908,7 +913,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
       ),
     );
   }
-  Widget _selectWarehouse(BuildContext context){
+  Widget _selectWarehouse(BuildContext context, Warehouses warehous){
     return FormField<String>(
       builder: (FormFieldState<String> state) {
         return InputDecorator(
@@ -922,9 +927,11 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
               isDense: true,
               onChanged: (String? newValue) {
                 setState(() {
-                  _warehouse = newValue!;
+                  warehouseList.add({
+                    "warehouse": newValue,
+                    "warehouseid": warehous.warehouse
+                  });
                 });
-                print(_warehouse);
               },
               items: _warehouseList.map((String value) {
                 return DropdownMenuItem<String>(
@@ -937,6 +944,63 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
         );
       },
     );
+  }
+  void handleClick() async {
+    _documentResponse!.isiKiriman!.map((e) => {
+       isiKirimanList.add(e.namaBarang)
+    });
+    _documentResponse!.namaAgen!.map((e) => {
+      namaAgenList.add(e.namaAgen)
+    });
+    for(int i = 0; i< _controllerTglPenerberbangan.length; i++){
+      tanggals.add({
+        'tanggal_penerbangan': _controllerTglPenerberbangan[i].text,
+        'smu': _documentResponse!.warehouses![i].smu
+      });
+    }
+    smu.map((e) => formSmuList.add(e));
+    isLoadingCreate = true;
+     var formdata = <String, dynamic>{
+        "project_id": widget.data!.id.toString(),
+        "isi_kiriman" : isiKirimanList,
+        "nama_agen" : namaAgenList,
+        "qty": _documentResponse!.data!.koli.toString(),
+        "total_berat": _documentResponse!.data!.beratTotal.toString(),
+        "asal_tps" : _documentResponse!.detail!.asalTps.toString(),
+        "kota_asal" : _kotaAsalController.text.toString(),
+        "kota_tujuan" : _kotaTujuanController.text.toString(),
+        "nomor_polisi_kendaraan" : _noPolisiKendaraanController.text.toString(),
+        "nama_pengemudi" : _namaPengemudiController.text.toString(),
+        "pengecualian_pemeriksaan" : _pengecualianPemeriksaanController.text.toString(),
+        "status_keamanan_diterbitkan_oleh" : _statuskeaamananditerbitkanolehController.text.toString(),
+        "transit" : _transit=='ADA'?'ADA':'TIDAK ADA',
+        "datawarehouse": warehouseList,
+        "smu":formSmuList,
+        "spx": isSpx.toString(),
+        "sco": isSco.toString(),
+        "shr": isShr.toString(),
+        "xray": isXray.toString(),
+        "etd": isEtd.toString(),
+        "other": isOther.toString(),
+        "metode_pemeriksaan_lain" : _metodePemeriksaanyanglainController.text.toString(),
+        "edd": isEdd.toString(),
+        "tujuan_transit" : _kotaTujuanTransitController.text.toString(),
+        "asal_transit" : _kotaAsalTransitController.text.toString(),
+        "tanggals":tanggals
+      };
+      // print(formdata);
+      var creteCsd = await api.createCSD(formdata);
+      if(creteCsd == true){
+        print('berhasil');
+        setState(() {
+          isLoadingCreate = false;
+        });
+      }else{
+        print('gagal');
+        setState(() {
+          isLoadingCreate = false;
+        });
+      }
   }
 }
 

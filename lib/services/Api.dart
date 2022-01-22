@@ -175,9 +175,27 @@ class Api {
     final response = await http.get(
         Uri.parse("${Url.DOCUMENT_SMU_DETAIL}/${id.toString()}"),
         headers: {'x-access-token': jwt!});
-    print( response.body);
+    // print( response.body);
     if (response.statusCode == 200) return smuFromJson(response.body);
     return [];
+  }
+
+  Future<bool> createCSD(formdata) async{
+    var bytes = utf8.encode(json.encode(formdata));
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? jwt = preferences.getString('jwt');
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'x-access-token': jwt!
+    };
+    final response = await http.post(
+        Uri.parse("${Url.CSD_CREATE}"),
+        body: bytes,
+        headers:requestHeaders);
+    print( response.body);
+    if (response.statusCode == 200) return true;
+    return false;
   }
 }
 
