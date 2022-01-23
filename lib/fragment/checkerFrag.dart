@@ -17,14 +17,14 @@ class CheckerFrag extends StatefulWidget {
 }
 
 class _CheckerFragState extends State<CheckerFrag> {
-  late Api api;
+  late Api api = Api();
   int status = 1;
   late Future<Response_acceptance?> service;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    api = Api();
+    // api = Api();
     service = api.acceptance_get();
   }
 
@@ -37,16 +37,16 @@ class _CheckerFragState extends State<CheckerFrag> {
         if (snapshot.hasData) {
           status = snapshot.data!.status;
           return status == 0
-              ? EmptyAcceptanceProject()
+              ? const EmptyAcceptanceProject()
               : _cardProject(snapshot.data!.data);
         } else if (snapshot.hasError) {
-          return EmptyAcceptanceProject();
+          return const EmptyAcceptanceProject();
         } else {
-          return LoadingIndicator(
+          return const LoadingIndicator(
               indicatorType: Indicator.ballScaleMultiple,
 
               /// Required, The loading type of the widget
-              colors: const [Color(0xFF5A85A8)],
+              colors: [Color(0xFF5A85A8)],
 
               /// Optional, The color collections
               strokeWidth: 2,
@@ -72,7 +72,7 @@ class _CheckerFragState extends State<CheckerFrag> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          color: Color(0xFF506C95),
+          color: const Color(0xFF506C95),
           child: Container(
             padding: const EdgeInsets.all(16),
             width: 350,
@@ -82,7 +82,7 @@ class _CheckerFragState extends State<CheckerFrag> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'No DO:',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -126,11 +126,11 @@ class _CheckerFragState extends State<CheckerFrag> {
                                       data: data,
                                     )));
                       },
-                      child: Icon(Icons.arrow_forward_ios,
+                      child: const Icon(Icons.arrow_forward_ios,
                           color: Color(0xFF506C95)),
                       style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(20),
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
                         primary: Colors.white, // <-- Button color
                         onPrimary: Colors.grey.shade100, // <-- Splash color
                       ),

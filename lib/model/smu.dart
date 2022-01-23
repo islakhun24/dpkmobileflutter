@@ -1,6 +1,4 @@
-
 import 'dart:convert';
-
 
 class Smu {
   int? id;
@@ -45,7 +43,7 @@ class Smu {
     required this.updatedAt,
   });
 
-  factory Smu.fromJson(Map<String, dynamic> json)  {
+  factory Smu.fromJson(Map<String, dynamic> json) {
     return Smu(
       id: json['id'],
       smu: json['smu'],
@@ -70,25 +68,25 @@ class Smu {
   }
   Map<String, dynamic> toJson() {
     return {
-      'id':id,
-      'smu':smu,
-      'nama_barang':nama_barang,
-      'nama_agen':nama_agen,
-      'no_hp':no_hp,
-      'alamat':alamat,
-      'status':status,
-      'koli':koli,
-      'berat_awal':berat_awal,
-      'berat_recharge_cargo':berat_recharge_cargo,
-      'berat_total':berat_total,
-      'checker':checker,
-      'project_id':project_id,
-      'check':check,
-      'warehouse':warehouse,
-      'maskapai':maskapai,
-      'tanggal_penerbangan':tanggal_penerbangan,
-      'createdAt':createdAt,
-      'updatedAt':updatedAt,
+      'id': id,
+      'smu': smu,
+      'nama_barang': nama_barang,
+      'nama_agen': nama_agen,
+      'no_hp': no_hp,
+      'alamat': alamat,
+      'status': status,
+      'koli': koli,
+      'berat_awal': berat_awal,
+      'berat_recharge_cargo': berat_recharge_cargo,
+      'berat_total': berat_total,
+      'checker': checker,
+      'project_id': project_id,
+      'check': check,
+      'warehouse': warehouse,
+      'maskapai': maskapai,
+      'tanggal_penerbangan': tanggal_penerbangan,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -97,6 +95,7 @@ class Smu {
     return 'Smu{id:$id, smu:$smu, nama_barang:$nama_barang, nama_agen:$nama_agen, no_hp:$no_hp, alamat:$alamat, status:$status, koli:$koli, berat_awal:$berat_awal, berat_recharge_cargo:$berat_recharge_cargo, berat_total:$berat_total, checker:$checker, project_id:$project_id, check:$check, warehouse:$warehouse, maskapai:$maskapai, tanggal_penerbangan:$tanggal_penerbangan, createdAt:$createdAt, updatedAt:$updatedAt}';
   }
 }
+
 List<Smu> smuFromJson(String jsonData) {
   final data = json.decode(jsonData);
   return List<Smu>.from(data.map((item) => Smu.fromJson(item)));

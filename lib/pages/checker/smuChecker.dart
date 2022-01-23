@@ -1,11 +1,9 @@
-
 import 'package:dpkmobileflutter/model/project.dart';
 import 'package:dpkmobileflutter/model/smu.dart';
 import 'package:dpkmobileflutter/pages/checker/Document.dart';
 import 'package:dpkmobileflutter/pages/homePage.dart';
 import 'package:dpkmobileflutter/services/Api.dart';
 import 'package:flutter/material.dart';
-
 
 class SmuCheckerPage extends StatefulWidget {
   const SmuCheckerPage({Key? key, this.data}) : super(key: key);
@@ -16,123 +14,171 @@ class SmuCheckerPage extends StatefulWidget {
 }
 
 class _SmuCheckerPageState extends State<SmuCheckerPage> {
-  late  Api api;
-  late Future futurePost ;
+  late Api api = Api();
+  late Future futurePost;
   late List<Smu?> smu = [];
   late bool checkLoading;
+  late bool checkFirstSMU = true;
   int position = 0;
   @override
   void initState() {
     super.initState();
-    api = Api();
     checkLoading = false;
   }
+
   Future loadList() {
-    Future <List<Smu>> futureCases = api.checkerSmu(widget.data!.id);
+    Future<List<Smu>> futureCases = api.checkerSmu(widget.data!.id);
     futureCases.then((smuList) {
       setState(() {
+        checkFirstSMU = false;
         this.smu = smuList;
       });
     });
     return futureCases;
   }
+
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
         child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              header(context),
-              Positioned(
-                top: 210,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: Card(
-                    color: Colors.white,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Stack(
+        children: [
+          header(context),
+          Positioned(
+            top: 210,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Card(
+                color: Colors.white,
 
-                    // margin: EdgeInsets.only(top: -40),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Daftar SMU',
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.only(top: 16),
-                              child:  Container(
-                              height:MediaQuery.of(context).size.height,
-                      child: FutureBuilder(
-                        builder: (context,snapshoot){
-                          return  smu.length == 0 ? Text('data kosong') :  ListView.separated(
-                            itemBuilder: (context, int index){
-                              return Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(smu[index]!.smu.toString(), style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: [
-                                          Expanded(flex:1, child:Text(smu[index]!.koli.toString() + ' koli')),
-                                          Expanded(
-                                              flex:1,
-                                              child:  Text(smu[index]!.berat_total.toString()+ ' Kg')),
-                                          Expanded(flex:1, child: Text(smu[index]!.status.toString())),
-                                          checkLoading == true && index == position ?  new CircularProgressIndicator() : Checkbox(
-                                              value: smu[index]!.check,
-                                              onChanged: (val) async {
-                                                this.checkLoading = true;
-                                                this.position = index;
-                                                Future<List<Smu?>> futureCheck = api.updateSmuChecker(smu[index]!.id);
-                                                futureCheck.then((smuList) {
-                                                  setState(() {
-                                                    this.checkLoading = false;
-                                                    smu = smuList;
-                                                  });
-                                                });
-
-                                              }
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],),);
-                            },
-                            itemCount: smu.length,
-                            separatorBuilder:  (context, index) => Divider(
-                              color: Colors.grey.shade300,
-                            ),
-                          );
-
-                        }, future: loadList(),),
-
-
-
-
-                    )
-
-                          )
-                        ],
+                // margin: EdgeInsets.only(top: -40),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16))),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Daftar SMU',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 16),
                       ),
-                    ),
+                      Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            child: FutureBuilder(
+                              builder: (context, snapshoot) {
+                                return checkFirstSMU == true
+                                    ? const Text('loading...')
+                                    : smu.isEmpty
+                                        ? const Text('data kosong')
+                                        : ListView.separated(
+                                            itemBuilder: (context, int index) {
+                                              return Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      smu[index]!
+                                                          .smu
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 4),
+                                                      child: Row(
+                                                        children: [
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Text(smu[
+                                                                          index]!
+                                                                      .koli
+                                                                      .toString() +
+                                                                  ' koli')),
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Text(smu[
+                                                                          index]!
+                                                                      .berat_total
+                                                                      .toString() +
+                                                                  ' Kg')),
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Text(smu[
+                                                                      index]!
+                                                                  .status
+                                                                  .toString())),
+                                                          checkLoading ==
+                                                                      true &&
+                                                                  index ==
+                                                                      position
+                                                              ? new CircularProgressIndicator()
+                                                              : Checkbox(
+                                                                  value: smu[index]!
+                                                                          .check ??
+                                                                      false,
+                                                                  onChanged:
+                                                                      (val) async {
+                                                                    this.checkLoading =
+                                                                        true;
+                                                                    this.position =
+                                                                        index;
+                                                                    Future<List<Smu?>>
+                                                                        futureCheck =
+                                                                        api.updateSmuChecker(
+                                                                            smu[index]!.id);
+                                                                    futureCheck
+                                                                        .then(
+                                                                            (smuList) {
+                                                                      setState(
+                                                                          () {
+                                                                        this.checkLoading =
+                                                                            false;
+                                                                        smu =
+                                                                            smuList;
+                                                                      });
+                                                                    });
+                                                                  })
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            itemCount: smu.length,
+                                            separatorBuilder:
+                                                (context, index) => Divider(
+                                              color: Colors.grey.shade300,
+                                            ),
+                                          );
+                              },
+                              future: loadList(),
+                            ),
+                          ))
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
-        ));
+              ),
+            ),
+          )
+        ],
+      ),
+    ));
   }
 
   Widget header(BuildContext context) {
@@ -188,13 +234,12 @@ class _SmuCheckerPageState extends State<SmuCheckerPage> {
                     alignment: Alignment.topLeft,
                     child: Row(
                       children: [
-
+                        cardSmu(context, 'Pengemudi',
+                            widget.data!.nama_pengemudi.toString()),
+                        cardSmu(context, 'No Kendaraan',
+                            widget.data!.no_polisi_kendaraan.toString()),
                         cardSmu(
-                            context,
-                            'Pengemudi',
-                            widget.data!.nama_pengemudi.toString() ),
-                        cardSmu(context, 'No Kendaraan', widget.data!.no_polisi_kendaraan.toString()),
-                        cardSmu(context, 'TPS', widget.data!.asal_tps.toString())
+                            context, 'TPS', widget.data!.asal_tps.toString())
                       ],
                     ),
                   )),
@@ -225,8 +270,6 @@ class _SmuCheckerPageState extends State<SmuCheckerPage> {
         ));
   }
 
-
-
   Widget cardSmu(BuildContext context, String header, String desc) {
     return Expanded(
         flex: 1,
@@ -254,12 +297,12 @@ class _SmuCheckerPageState extends State<SmuCheckerPage> {
                       fontWeight: FontWeight.w700,
                       fontSize: 16),
                 ),
-
               ],
             ),
           ),
         ));
   }
+
   Future<void> _showMyDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
@@ -277,7 +320,10 @@ class _SmuCheckerPageState extends State<SmuCheckerPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Tidak', style: TextStyle(color: Colors.red),),
+              child: const Text(
+                'Tidak',
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -286,15 +332,15 @@ class _SmuCheckerPageState extends State<SmuCheckerPage> {
               child: const Text('Document'),
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => DocumentDetailPage(data: widget.data)));
-
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DocumentDetailPage(data: widget.data)));
               },
             ),
-
           ],
         );
       },
     );
   }
 }
-

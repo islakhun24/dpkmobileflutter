@@ -1,4 +1,4 @@
-import 'dart:html';
+// import 'dart:html';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:dpkmobileflutter/model/document_response.dart';
 import 'package:dpkmobileflutter/model/project.dart';
@@ -20,15 +20,15 @@ class DocumentDetailPage extends StatefulWidget {
 enum Transit { ada, tidakAda }
 
 class _DocumentDetailPageState extends State<DocumentDetailPage> {
-  late TextEditingController _kotaAsalController;
-  late TextEditingController _kotaTujuanController;
-  late TextEditingController _kotaAsalTransitController;
-  late TextEditingController _kotaTujuanTransitController;
-  late TextEditingController _noPolisiKendaraanController;
-  late TextEditingController _namaPengemudiController;
-  late TextEditingController _statuskeaamananditerbitkanolehController;
-  late TextEditingController _pengecualianPemeriksaanController;
-  late TextEditingController _metodePemeriksaanyanglainController;
+  final _kotaAsalController = TextEditingController();
+  final _kotaTujuanController = TextEditingController();
+  final _kotaAsalTransitController = TextEditingController();
+  final _kotaTujuanTransitController = TextEditingController();
+  final _noPolisiKendaraanController = TextEditingController();
+  final _namaPengemudiController = TextEditingController();
+  final _statuskeaamananditerbitkanolehController = TextEditingController();
+  final _pengecualianPemeriksaanController = TextEditingController();
+  final _metodePemeriksaanyanglainController = TextEditingController();
   List<Map<String, dynamic>> warehouseList = [];
   List<Map<String, dynamic>> tanggals = [];
   List<String?> isiKirimanList = [];
@@ -68,15 +68,6 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
     api = Api();
     checkLoading = false;
     _warehouse = "DBM";
-    _kotaAsalController = new TextEditingController();
-    _kotaTujuanController = new TextEditingController();
-    _kotaTujuanTransitController = new TextEditingController();
-    _kotaAsalTransitController = new TextEditingController();
-    _noPolisiKendaraanController = new TextEditingController();
-    _namaPengemudiController = new TextEditingController();
-    _statuskeaamananditerbitkanolehController = new TextEditingController();
-    _pengecualianPemeriksaanController = new TextEditingController();
-    _metodePemeriksaanyanglainController = new TextEditingController();
     _documentResponse = new DocumentResponse();
     loadDetails();
     loadSmu();
@@ -200,8 +191,10 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                 ),
               )),
           isLoading
-              ? LoadingIndicator(
-                  indicatorType: Indicator.ballClipRotate,
+              ? const Center(
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballClipRotate,
+                  ),
                 )
               : Padding(
                   padding: const EdgeInsets.all(16),

@@ -11,7 +11,6 @@ import 'package:flutter_logs/flutter_logs.dart';
 import '../services/Api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -45,10 +44,10 @@ class _LoginPageState extends State<LoginPage> {
   );
 
   void displayDialog(context, title, text) => showDialog(
-    context: context,
-    builder: (context) =>
-        AlertDialog(title: Text(title), content: Text(text)),
-  );
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +275,7 @@ class _LoginPageState extends State<LoginPage> {
 
             Auth auth = Auth.fromJson(jsonDecode(jwt!));
             prefs = await SharedPreferences.getInstance();
+            print('ini jwt : ' + auth.access_token);
             await prefs.setString('jwt', auth.access_token);
             if (auth.access_token != null) {
               // storage.write(key: "jwt", value: auth.access_token);
