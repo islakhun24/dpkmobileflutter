@@ -492,36 +492,25 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                                                       Text(
                                                           'Metode Pemeriksaan'),
                                                       SizedBox(height: 4),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                      Wrap(
+                                                        // alignment:
+                                                        //     WrapAlignment.start,
+                                                        // spacing: 10.0,
+                                                        direction:
+                                                            Axis.horizontal,
+                                                        // mainAxisAlignment:
+                                                        //     MainAxisAlignment
+                                                        //         .start,
+                                                        // crossAxisAlignment:
+                                                        //     CrossAxisAlignment
+                                                        //         .start,
                                                         children: [
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child:
-                                                                _checkboxXray(
-                                                                    context),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: _checkboxEtd(
-                                                                context),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: _checkboxEdd(
-                                                                context),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child:
-                                                                _checkboxOther(
-                                                                    context),
-                                                          )
+                                                          _checkboxXray(
+                                                              context),
+                                                          _checkboxEtd(context),
+                                                          _checkboxEdd(context),
+                                                          _checkboxOther(
+                                                              context)
                                                         ],
                                                       ),
                                                       isOther
@@ -730,7 +719,8 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   }
 
   Widget _checkboxXray(BuildContext context) {
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Checkbox(
             value: isXray,
@@ -742,13 +732,19 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
         SizedBox(
           width: 8,
         ),
-        Text('X-Ray')
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('X-Ray'),
+          ],
+        )
       ],
     );
   }
 
   Widget _checkboxEtd(BuildContext context) {
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Checkbox(
             value: isEtd,
@@ -766,7 +762,8 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   }
 
   Widget _checkboxEdd(BuildContext context) {
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Checkbox(
             value: isEdd,
@@ -784,7 +781,8 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   }
 
   Widget _checkboxOther(BuildContext context) {
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Checkbox(
             value: isOther,
@@ -1126,41 +1124,42 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   Widget _selectWarehouse(BuildContext context, Warehouses warehous) {
     return FormField<String>(
       builder: (FormFieldState<String> state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButtonFormField<String>(
-              // isExpanded: true,
-              isExpanded: true,
-              decoration: InputDecoration(
-                enabledBorder: InputBorder.none,
+        return DropdownButtonHideUnderline(
+          child: DropdownButtonFormField<String>(
+            // isExpanded: true,
+            isExpanded: true,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
+                borderRadius: BorderRadius.circular(12),
               ),
-              hint: const Text("Pilih Warehouse"),
-              value: _warehouse,
-              isDense: true,
-              // onSaved: (newValue) {
-              //   print(newValue);
-              //   _warehouse = newValue.toString();
-              //   warehouseList.add(
-              //       {"warehouse": newValue, "warehouseid": warehous.warehouse});
-              //   setState(() {});
-              // },
-              onChanged: (newValue) {
-                print(newValue);
-                _warehouse = newValue.toString();
-                warehouseList.add(
-                    {"warehouse": newValue, "warehouseid": warehous.warehouse});
-                setState(() {});
-              },
-              items: _warehouseList.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              fillColor: Colors.white,
+              filled: true,
+              enabledBorder: InputBorder.none,
             ),
+            hint: const Text("Pilih Warehouse"),
+            value: _warehouse,
+            isDense: true,
+            // onSaved: (newValue) {
+            //   print(newValue);
+            //   _warehouse = newValue.toString();
+            //   warehouseList.add(
+            //       {"warehouse": newValue, "warehouseid": warehous.warehouse});
+            //   setState(() {});
+            // },
+            onChanged: (newValue) {
+              print(newValue);
+              _warehouse = newValue.toString();
+              warehouseList.add(
+                  {"warehouse": newValue, "warehouseid": warehous.warehouse});
+              setState(() {});
+            },
+            items: _warehouseList.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
         );
       },
