@@ -31,7 +31,8 @@ class Api {
         headers: {'x-access-token': jwt!});
     if (res.statusCode == 200)
       return Response_acceptance.fromJson(jsonDecode(res.body));
-    else return null;
+    else
+      return null;
   }
 
   Future<List<Smu>> getSmuAcceptance(String id) async {
@@ -113,6 +114,7 @@ class Api {
     if (res.statusCode == 200) return true;
     return false;
   }
+
   Future<List<Smu?>> updateSmuChecker(id) async {
     // print(formdata);
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -123,15 +125,18 @@ class Api {
     if (res.statusCode == 200) return smuFromJson(res.body);
     return [];
   }
+
   Future<Response_acceptance?> checker_project() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
     final res = await http.get(Uri.parse(Url.CHECKER_SMU_PROJECT),
         headers: {'x-access-token': jwt!});
 
-    if (res.statusCode == 200) return Response_acceptance.fromJson(jsonDecode(res.body));
+    if (res.statusCode == 200)
+      return Response_acceptance.fromJson(jsonDecode(res.body));
     return null;
   }
+
   Future<List<Smu>> checkerSmu(id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
@@ -169,6 +174,7 @@ class Api {
       return null;
     }
   }
+
   Future<List<Smu>> documentSmuDetail(id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
@@ -180,7 +186,8 @@ class Api {
     return [];
   }
 
-  Future<bool> createCSD(formdata) async{
+  Future<bool> createCSD(formdata) async {
+    print(formdata.toString());
     var bytes = utf8.encode(json.encode(formdata));
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? jwt = preferences.getString('jwt');
@@ -189,11 +196,9 @@ class Api {
       'Accept': 'application/json',
       'x-access-token': jwt!
     };
-    final response = await http.post(
-        Uri.parse("${Url.CSD_CREATE}"),
-        body: bytes,
-        headers:requestHeaders);
-    print( response.body);
+    final response = await http.post(Uri.parse("${Url.CSD_CREATE}"),
+        body: bytes, headers: requestHeaders);
+    print(response.body);
     if (response.statusCode == 200) return true;
     return false;
   }

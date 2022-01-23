@@ -279,8 +279,9 @@ class _LoginPageState extends State<LoginPage> {
             await prefs.setString('jwt', auth.access_token);
             if (auth.access_token != null) {
               // storage.write(key: "jwt", value: auth.access_token);
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (_) => HomePage(),
+              ));
             } else {
               displayDialog(
                   context, "Gagal login", "Username atau password salah");

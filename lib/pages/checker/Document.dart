@@ -8,7 +8,6 @@ import 'package:dpkmobileflutter/services/Api.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class DocumentDetailPage extends StatefulWidget {
   const DocumentDetailPage({Key? key, this.data}) : super(key: key);
@@ -55,20 +54,20 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   late DocumentResponse? _documentResponse;
   late bool isLoading = true;
   final childrenWarehouse = <Widget>[];
-  List<TextEditingController> _controllerNamaCustomers = [];
-  List<TextEditingController> _controllerNoSmus = [];
-  List<TextEditingController> _controllerTglPenerberbangan = [];
-  List<TextEditingController> _controllerWarehouses = [];
+  final List<TextEditingController> _controllerNamaCustomers = [];
+  final List<TextEditingController> _controllerNoSmus = [];
+  final List<TextEditingController> _controllerTglPenerberbangan = [];
+  final List<TextEditingController> _controllerWarehouses = [];
   final format = DateFormat("yyyy-MM-dd HH:mm");
   List<String> _warehouseList = ['DBM', 'PERSERO BATAM']; // Option 2
-  late String _warehouse;
+  String? _warehouse;
   @override
   void initState() {
     super.initState();
     api = Api();
     checkLoading = false;
-    _warehouse = "DBM";
-    _documentResponse = new DocumentResponse();
+    // _warehouse = "DBM";
+    _documentResponse = DocumentResponse();
     loadDetails();
     loadSmu();
   }
@@ -84,6 +83,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
   }
 
   Future loadDetails() {
+    print('ini id : ' + widget.data!.id.toString());
     Future<DocumentResponse?> futureCases = api.documentDetail(widget.data!.id);
     futureCases.then((smuList) {
       setState(() {
@@ -96,7 +96,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
           this._documentResponse!.detail!.kotaTujuan.toString();
       _kotaAsalTransitController.text = _kotaTujuanController.text;
       for (var i = 0; i < _documentResponse!.smu!.length; i++) {
-        childrenSmu.add(new Container(
+        childrenSmu.add(Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(8)),
             color: Colors.blue.shade100,
@@ -110,6 +110,9 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
           ),
         ));
       }
+
+      print('ini jumlah looping form : ' +
+          _documentResponse!.warehouses!.length.toString());
 
       for (var i = 0; i < _documentResponse!.warehouses!.length; i++) {
         _controllerNamaCustomers.add(TextEditingController());
@@ -126,7 +129,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
         _controllerWarehouses[i].text =
             _documentResponse!.warehouses![i].warehouse.toString();
 
-        childrenWarehouse.add(new Padding(
+        childrenWarehouse.add(Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
             child: Row(
               children: [
@@ -134,13 +137,13 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                     flex: 1,
                     child: _widgetNamaCustomer(
                         context, _controllerNamaCustomers[i])),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 Expanded(
                     flex: 1,
                     child: _widgetNoSMU(context, _controllerNoSmus[i])),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 Expanded(
@@ -153,7 +156,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                       : _selectWarehouse(
                           context, _documentResponse!.warehouses![i]),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 Expanded(
@@ -243,28 +246,68 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
                                   margin: const EdgeInsets.only(top: 16),
                                   child: Align(
                                     alignment: Alignment.topRight,
-                                    child: RaisedButton(
-                                      color: Colors.blue,
-                                      padding: const EdgeInsets.only(
-                                          left: 16,
-                                          top: 2,
-                                          bottom: 2,
-                                          right: 16),
-                                      splashColor: Colors.blue.shade600,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8))),
-                                      onPressed: () async {
-                                        handleClick();
-                                        //
-                                        // api.adminSelesai(newData, widget.data!.id);
-                                      },
-                                      child: Text(
-                                        'Document',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white),
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
+                                          child: RaisedButton(
+                                            color: isLoadingCreate
+                                                ? Colors.blue.withOpacity(0.1)
+                                                : Colors.blue,
+                                            padding: const EdgeInsets.only(
+                                                left: 16,
+                                                top: 2,
+                                                bottom: 2,
+                                                right: 16),
+                                            splashColor: Colors.blue.shade600,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8))),
+                                            onPressed: () async {
+                                              if (isLoadingCreate == false) {
+                                                handleClick();
+                                              }
+                                              //
+                                              // api.adminSelesai(newData, widget.data!.id);
+                                            },
+                                            child: Text(
+                                              isLoadingCreate
+                                                  ? 'Loading...'
+                                                  : 'Save Document',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                        RaisedButton(
+                                          color: Colors.blue,
+                                          padding: const EdgeInsets.only(
+                                              left: 16,
+                                              top: 2,
+                                              bottom: 2,
+                                              right: 16),
+                                          splashColor: Colors.blue.shade600,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8))),
+                                          onPressed: () async {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                              builder: (_) => HomePage(),
+                                            ));
+                                          },
+                                          child: Text(
+                                            'Selesai',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -1088,17 +1131,28 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
             border: OutlineInputBorder(),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              hint: Text("Select Device"),
+            child: DropdownButtonFormField<String>(
+              // isExpanded: true,
+              isExpanded: true,
+              decoration: InputDecoration(
+                enabledBorder: InputBorder.none,
+              ),
+              hint: const Text("Pilih Warehouse"),
               value: _warehouse,
               isDense: true,
-              onChanged: (String? newValue) {
-                setState(() {
-                  warehouseList.add({
-                    "warehouse": newValue,
-                    "warehouseid": warehous.warehouse
-                  });
-                });
+              // onSaved: (newValue) {
+              //   print(newValue);
+              //   _warehouse = newValue.toString();
+              //   warehouseList.add(
+              //       {"warehouse": newValue, "warehouseid": warehous.warehouse});
+              //   setState(() {});
+              // },
+              onChanged: (newValue) {
+                print(newValue);
+                _warehouse = newValue.toString();
+                warehouseList.add(
+                    {"warehouse": newValue, "warehouseid": warehous.warehouse});
+                setState(() {});
               },
               items: _warehouseList.map((String value) {
                 return DropdownMenuItem<String>(
@@ -1125,6 +1179,7 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
     }
     smu.map((e) => formSmuList.add(e));
     isLoadingCreate = true;
+    setState(() {});
     var formdata = <String, dynamic>{
       "project_id": widget.data!.id.toString(),
       "isi_kiriman": isiKirimanList,
@@ -1160,6 +1215,14 @@ class _DocumentDetailPageState extends State<DocumentDetailPage> {
     var creteCsd = await api.createCSD(formdata);
     if (creteCsd == true) {
       print('berhasil');
+      final scaffold = ScaffoldMessenger.of(context);
+      scaffold.showSnackBar(
+        const SnackBar(
+          content: const Text('perubahan data berhasil'),
+          // action: SnackBarAction(
+          //     label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        ),
+      );
       setState(() {
         isLoadingCreate = false;
       });
